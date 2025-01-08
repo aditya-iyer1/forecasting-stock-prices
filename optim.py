@@ -81,23 +81,45 @@ def MinimizeRisk(beta, capm, target_return):
 		return W @ capm - target_return
 	def constraint2(W):
 		return W @ np.ones(len(W)) - 1
+	def constraint3(W):
+		return W
 
 	W = np.ones(len(beta))
 
-	cons = [{'type':'eq', 'fun': constraint},
-			{'type':'eq', 'fun': constraint2}]
+	cons = [{'type':'ineq', 'fun': constraint},
+			{'type':'eq', 'fun': constraint2},
+			{'type':'ineq','fun':constraint3}]
 
 	res = minimize(objective, W, method = 'SLSQP', bounds = None, constraints = cons)
 	print(res)
 
 	return res.x
 
-W_MinRisk = MinimizeRisk(BETA, CAPM, 0.09)
-
-for t, w in zip(tickers, W_MinRisk):
-	
 
 
+def MaximizeReturn(beta, capm, target_return):
+
+	beta, capm = np.array(beta), np.array(capm)
+
+	def objective(W):
+		return W @ beta
+	def constraint(W):
+		return W @ capm - target_return
+	def constraint2(W):
+		return W @ np.ones(len(W)) - 1
+	def constraint3(W):
+		return W
+
+	W = np.ones(len(beta))
+
+	cons = [{'type':'ineq', 'fun': constraint},
+			{'type':'eq', 'fun': constraint2},
+			{'type':'ineq','fun':constraint3}]
+
+	res = minimize(objective, W, method = 'SLSQP', bounds = None, constraints = cons)
+	print(res)
+
+	return res.x
 
 
 
